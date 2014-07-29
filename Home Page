@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+</head>
+<body>
+	<div class="container">
+	<form action="" method="get">
+		<div class="row">
+			<div class="col-md-6 col-md-offset-3">
+
+				<img src="../img/GeoSpell.png" class="img-responsive" alt="Responsive image">
+
+				<br/>
+
+				<Label for="postcode">What is your postcode?</label>
+				<input id="postcode" name="postcode" class="form-control"/>
+
+				<br/>
+	
+				<Label for="age">How old are you?</label>
+				<input id="age" name="age" class="form-control"/>
+
+				<br/>
+
+				<label for="Gender">
+					What gender are you?
+				</label>
+				<br/>
+				<input type="radio" name="gender"/> Boy
+				<br/>
+				<input type="radio" name="gender"/> Girl
+
+				<br/>
+				<br/>
+
+			<button class="btn btn-primary btn-lg" type="button">
+				Submit
+			</button>
+	</form>	
+	</div>
+				</div>
+
+</body>
+</html>
