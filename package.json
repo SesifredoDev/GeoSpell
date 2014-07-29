@@ -1,0 +1,20 @@
+{
+  "name": "GeoSpell",
+  "version": "0.0.1",
+  "description": "Test your spelling and rank yourself globally.",
+  "main": "server.js",
+  "repository": "",
+  "author": "Liam Boyd <liamboyd19@gmail.com>, Hashan Punchihewa <hashan.punchihewa@gmail.com>",
+  "dependencies": {
+    "async": "~0.2.8",
+    "express": "^4.7.2",
+    "body-parser": "^1.5.2",
+    "express-session": "^1.7.2",
+    "request": "^2.39.0",
+    "ogg": "^1.1.1",
+    "vorbis": "^0.1.1",
+    "lame": "^1.1.0",
+    "wav": "^0.1.2",
+    "redis": "^0.11.0"
+  }
+}
