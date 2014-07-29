@@ -76,7 +76,7 @@ router.get("/:id", function(req, res) {
   });
 });
 
-var client = redis.createClient();
+var client = redis.createClient(16181, "pub-redis-16181.us-east-1-2.1.ec2.garantiadata.com");
 
 router.get("/leaderboard/:board?", function(req, res) {
   client.zrange("global" || req.params.board, 0, req.query.end || 10, function(err, keys) {
@@ -84,7 +84,7 @@ router.get("/leaderboard/:board?", function(req, res) {
   });
 });
 
-rotuer.post("/leaderboard/:board", function(req, res) {
+router.post("/leaderboard/:board", function(req, res) {
   client.zadd(req.params.board, req.body.score, req.body.name, function(err) {
     if(err) {
       res.end(err);
