@@ -28,7 +28,7 @@ var redis = require("redis");
 //
 var router = express();
 
-router.use(express.static(path.resolve(__dirname, 'client')));
+router.use(express.static(path.resolve(__dirname, "public")));
 router.use(session({secret:"Triple Secret"}));
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded());
