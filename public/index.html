@@ -1,46 +1,51 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8"/>
 	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 </head>
 <body>
-	<div class="container">
-	<form action="" method="get">
+	<div class="container" id="container">
 		<div class="row">
 			<div class="col-md-6 col-md-offset-3">
+				<img src="/GeoSpell.png" style="margin-top:20px;" class="img-responsive" alt="Responsive image">
+				<main id="main" style="margin-top:20px;">
+				<form type="form" id="begin" class="well">
+					<br/>
+					
+					<div id="postcode-group" class="form-group">
+						<label for="postcode" class="control-label">What is your postcode?</label>
+						<input id="postcode" name="postcode" class="form-control"/>
+					</div>
 
-				<img src="/GeoSpell.png" class="img-responsive" alt="Responsive image">
-
-				<br/>
-
-				<Label for="postcode">What is your postcode?</label>
-				<input id="postcode" name="postcode" class="form-control"/>
-
-				<br/>
+					<br/>
 	
-				<Label for="age">How old are you?</label>
-				<input id="age" name="age" class="form-control"/>
+					<div id="age-group" class="form-group">
+						<label for="age" class="control-label">How old are you?</label>
+						<input type="number" id="age" name="age" class="form-control"/>
+					</div>
 
-				<br/>
+					<br/>
 
-				<label for="Gender">
-					What gender are you?
-				</label>
-				<br/>
-				<input type="radio" name="gender"/> Boy
-				<br/>
-				<input type="radio" name="gender"/> Girl
+					<label for="gender">What gender are you?</label>
+					<br/>
+					<input type="radio" name="gender" checked/> Boy
+					<br/>
+					<input type="radio" name="gender"/> Girl
 
-				<br/>
-				<br/>
+					<br/>
+					<br/>
 
-			<button class="btn btn-primary btn-lg" type="button">
-				Submit
-			</button>
-	</form>	
+					<button class="btn btn-primary btn-lg" id="start" type="button">
+						Begin
+						<i class="fa fa-chevron-right"></i>
+					</button>
+			</form>
+			</main>
+		</div>
 	</div>
-				</div>
-
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="/index.js"></script>
 </body>
 </html>

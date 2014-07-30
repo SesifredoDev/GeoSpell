@@ -38,8 +38,8 @@ module.exports = {
   7: {
     minLength:9,
     maxLength:12,
-    minCorpusCount:35000,
-    maxCorpusCount:40000
+    minCorpusCount:30000,
+    maxCorpusCount:35000
   },
   8: {
     minLength:9,
@@ -52,5 +52,47 @@ module.exports = {
     maxLength:15,
     minCorpusCount:25000,
     maxCorpusCount:30000
+  }, 
+  10: {
+    minLength:12,
+    maxLength:15,
+    minCorpusCount:20000,
+    maxCorpusCount:25000
+  },
+  11: {
+    minLength:12,
+    maxLength:15,
+    minCorpusCount:15000,
+    maxCorpusCount:20000
+  },
+  12: {
+    minLength:15,
+    maxLength:20,
+    minCorpusCount:15000,
+    maxCorpusCount:20000
+  },
+  13: {
+    minLength:15,
+    maxLength:20,
+    minCorpusCount:10000,
+    maxCorpusCount:15000
+  },
+  14: {
+    minLength:15,
+    maxLength:20,
+    minCorpusCount:5000,
+    maxCorpusCount:10000
+  },
+  15: {
+    minLength:20,
+    maxLength:25,
+    minCorpusCount:5000,
+    maxCorpusCount:10000
+  },
+  16:{
+    minLength:20,
+    maxLength:25,
+    minCorpusCount:0,
+    maxCorpusCount:5000
   }
 };

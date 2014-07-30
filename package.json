@@ -16,5 +16,15 @@
     "lame": "^1.1.0",
     "wav": "^0.1.2",
     "redis": "^0.11.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.8.6",
+    "vinyl-source-stream": "^0.1.1",
+    "browserify": "^5.9.1",
+    "handlebars": "^2.0.0-alpha.4",
+    "hbsfy": "^2.0.0"
+  },
+  "scripts": {
+    "build":"browserify -t hbsfy client.js > public/index.js"
   }
 }

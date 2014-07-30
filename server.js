@@ -20,12 +20,6 @@ var wav = require("wav"); // for WAVE files
 //
 
 var redis = require("redis");
-
-// ## SimpleServer `SimpleServer(obj)`
-//
-// Creates a new instance of SimpleServer with the following options:
-//  * `port` - The HTTP port to listen on. If `process.env.PORT` is set, _it overrides this value_.
-//
 var router = express();
 
 router.use(express.static(path.resolve(__dirname, "public")));
@@ -35,22 +29,29 @@ router.use(bodyParser.urlencoded());
 
 var API_KEY = "009057c6287f8c80a49053c3c8c2da500b6abb3f9a925a737";
 
-router.get("/:id", function(req, res) {
-  var url = "http://api.wordnik.com/v4/words.json/randomWord?api_key=" + API_KEY +"&";
-  var level = levels[req.params.id];
-  for(var key in level) {
-    url += key + "=" + level[key] + "&";
-  }
-  request.get(url, function(err, resp, body) {
-    body = JSON.parse(body).word;
-    if(err) {
-      throw err;
-    } else if(req.query.type === "text") {
-      console.log(body);
-      res.end(body);
-    } else {
+router.get("/words/:level", function(req, res) {
+  console.log(req.params.level);
+  var url = "http://api.wordnik.com/v4/words.json/randomWords?api_key=" + API_KEY +"&";
+    var level = levels[req.params.level];
+    for(var key in level) {
+        url += key + "=" + level[key] + "&";
+    }
+    url += "limit=5&hasDictionaryDef=true&excludePartOfSpeech=proper-noun,given-name,family-name";
+    console.log(url);
+    request.get(url, function(err, resp, body) {
+      body = JSON.parse(body);
+        var ret = [];
+        for(var i = 0; i < body.length; i++) {
+            ret.push(body[i].word);
+        }
+        console.log(ret);
+        res.json(ret);
+    }); 
+});
+
+router.get("/speech/:word", function(req, res) {
       var mp3 = request.get(
-        "http://translate.google.com/translate_tts?ie=UTF-8&tl=en&q=" + body);
+        "http://translate.google.com/translate_tts?ie=UTF-8&tl=en&q=" + req.params.word);
       if(req.query.type === "mp3") {
         mp3.pipe(res);
       } else if(req.query.type === "ogg") {
@@ -72,8 +73,6 @@ router.get("/:id", function(req, res) {
           .pipe(wav.Writer())
           .pipe(res);
       }
-    }
-  });
 });
 
 var client = redis.createClient(16181, "pub-redis-16181.us-east-1-2.1.ec2.garantiadata.com");
