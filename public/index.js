@@ -5,7 +5,8 @@ var startButton = document.getElementById("start");
 var mainFrame = document.getElementById("main");
 var container = document.getElementById("container");
 var API_KEY = "009057c6287f8c80a49053c3c8c2da500b6abb3f9a925a737";
-  
+var county = "";
+
 var words = [];
 var currentWord = "";
 var wrong = false;
@@ -78,8 +79,23 @@ var loadLevel = function(level) {
     });
 }
 
-var loadLeaderboard = function() {
-    container.innerHTML = leaderboardTemplate();  
+var loadLeaderboard = function(score) {
+    container.innerHTML = leaderboardTemplate({
+        score:score,
+        oldWord:oldWord
+    });
+    console.log(score);
+    if(score !== undefined) {
+        console.log("fsdfd");
+        var submitScoreForm = $("#submit-score-form");
+        var submitScore = $("#submit-score");
+        console.log(submitScoreForm);
+        console.log(submitScore);
+        submitScore.on("click", function() {
+            console.log("hey");
+            submitScoreForm.slideUp(); 
+        });
+    }
 };
 
 var age = document.getElementById("age");
@@ -696,8 +712,13 @@ module.exports = require("handlebars/runtime")["default"];
 // hbsfy compiled Handlebars template
 var Handlebars = require('hbsfy/runtime');
 module.exports = Handlebars.template({"compiler":[5,">= 2.0.0"],"main":function(depth0,helpers,partials,data) {
-  return "<div class=\"row\">\n	<div class=\"col-md-6\">\n		<h3 >Leaderboards</h3>\n	</div>\n	<div class=\"col-md-6\">\n		<h3>Global Leaderboards</h3>\n	</div>\n	<div class=\"col-md-6\">	\n		<p>See where you scale against others around the country!</p>\n	</div>\n	\n	<div class=\"col-md-6\">\n		<p>See where you scale against others around the globe!</p>\n	</div>\n	<div class=\"col-md-6\">\n	<table class=\"table table-bordered\">\n		<tr class=\"active\">\n			<td>#</td>\n			<td>Name</td>\n			<td>County</td>\n\n		</tr>\n			<tr>\n			<td>1</td>\n			<td>Jane Janley <span class=\"label label-default\">19</span></td>\n			<td>Plymouth</td>\n\n		</tr>\n		<tr>\n			<td>2</td>\n			<td>Jeffery Jefferson <span class=\"label label-default\">17</span></td>\n			<td>Norfolk</td>\n\n		</tr>\n		<tr>\n			<td>3</td>\n			<td>Bradley Bradders <span class=\"label label-default\">15</span></td>\n			<td>Kent</td>\n	\n		</tr>\n	</table>\n</div>\n<div class=\"col-md-6\">\n	<table class=\"table table-bordered\">\n		<tr class=\"active\">\n			<td>#</td>\n			<td>Name</td>\n			<td>Country</td>\n\n		</tr>\n			<tr>\n			<td>1</td>\n			<td>Ade Adeshugba <span class=\"label label-default\">20</span></td>\n			<td>South Africa</td>\n\n		</tr>\n		<tr>\n			<td>2</td>\n			<td>Xin Hiun <span class=\"label label-default\">19</span></td>\n			<td>Japan</td>\n	\n		</tr>\n		<tr>\n			<td>3</td>\n			<td>Jane Janley <span class=\"label label-default\">19</span></td>\n			<td>UK</td>\n	\n		</tr>\n	</table>\n</div>\n</div>";
-  },"useData":true});
+  var helper, functionType="function", escapeExpression=this.escapeExpression;
+  return "<div class=\"row\">\n	<div class=\"col-md-12\">\n		<div class=\"alert alert-success\" role=\"alert\">\n			<b>Well done!</b> You got: "
+    + escapeExpression(((helper = helpers.score || (depth0 && depth0.score)),(typeof helper === functionType ? helper.call(depth0, {"name":"score","hash":{},"data":data}) : helper)))
+    + ".\n			The answer to the final question was "
+    + escapeExpression(((helper = helpers.oldWord || (depth0 && depth0.oldWord)),(typeof helper === functionType ? helper.call(depth0, {"name":"oldWord","hash":{},"data":data}) : helper)))
+    + ".\n		</div>\n			<form id=\"submit-score-form\" class=\"well\">\n				<label>Email</label>\n				<input class=\"form-control\" id=\"email\"/>\n				<br/>\n				<button id=\"submit-score\" class=\"btn btn-primary\">Submit</button>\n				<button type=\"button\" class=\"btn btn-success\">Go again!</button>\n			</form>\n	</div>\n	<div class=\"col-md-6\">\n		<h3 >Local Leaderboards</h3>\n	</div>\n	<div class=\"col-md-6\">\n		<h3>Global Leaderboards</h3>\n	</div>\n	<div class=\"col-md-6\">	\n		<p>See where you scale against others around the country!</p>\n	</div>\n	\n	<div class=\"col-md-6\">\n		<p>See where you scale against others around the globe!</p>\n	</div>\n	<div class=\"col-md-6\">\n	<table class=\"table table-bordered\">\n		<tr class=\"active\">\n			<td>#</td>\n			<td>Name</td>\n			<td>County</td>\n\n		</tr>\n			<tr>\n			<td>1</td>\n			<td>Jane Janley <span class=\"label label-default\">19</span></td>\n			<td>Plymouth</td>\n\n		</tr>\n		<tr>\n			<td>2</td>\n			<td>Jeffery Jefferson <span class=\"label label-default\">17</span></td>\n			<td>Norfolk</td>\n\n		</tr>\n		<tr>\n			<td>3</td>\n			<td>Bradley Bradders <span class=\"label label-default\">15</span></td>\n			<td>Kent</td>\n	\n		</tr>\n	</table>\n</div>\n<div class=\"col-md-6\">\n	<table class=\"table table-bordered\">\n		<tr class=\"active\">\n			<td>#</td>\n			<td>Name</td>\n			<td>Country</td>\n\n		</tr>\n			<tr>\n			<td>1</td>\n			<td>Ade Adeshugba <span class=\"label label-default\">20</span></td>\n			<td>South Africa</td>\n\n		</tr>\n		<tr>\n			<td>2</td>\n			<td>Xin Hiun <span class=\"label label-default\">19</span></td>\n			<td>Japan</td>\n	\n		</tr>\n		<tr>\n			<td>3</td>\n			<td>Jane Janley <span class=\"label label-default\">19</span></td>\n			<td>UK</td>\n	\n		</tr>\n	</table>\n</div>\n</div>";
+},"useData":true});
 
 },{"hbsfy/runtime":9}],11:[function(require,module,exports){
 // hbsfy compiled Handlebars template
