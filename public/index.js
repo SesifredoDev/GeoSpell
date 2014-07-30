@@ -50,12 +50,16 @@ var loadQuestion = function() {
             currentWord = words[part];
             if(lives > 0) {
                 if(part === 0) {
-                    loadLevel(level+1);
+                    if(level == 16) {
+                        loadLevel(level+1);
+                    } else {
+                        loadLevel(level);
+                    }
                 } else {
                     loadQuestion();
                 }
             } else {
-              loadLeaderboard();
+              loadLeaderboard(score);
             }
         };
         submit.addEventListener("click", s);
