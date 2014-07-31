@@ -30,7 +30,8 @@ var loadQuestion = function() {
         score:score,
         wrong:wrong,
         oldWord:oldWord,
-        lives:lives
+        lives:lives,
+        county:county
     });
     console.log(currentWord);
         var submit = document.getElementById("submit");
@@ -85,7 +86,8 @@ var loadScores = function(globalScores, localScores) {
         oldWord:oldWord,
         globalScores:globalScores,
         localScores:localScores,
-        showScore:lives === 0
+        showScore:lives === 0,
+        county:county
     });
     if(score !== undefined) {
         console.log("fsdfd");
@@ -151,7 +153,7 @@ if(localStorage.county) {
 startButton.addEventListener("click", function(e) {
     var invalid = false;
     var ageValue = parseInt(age.value);
-    if(!postcode.value) {
+    if(!postcode.value && postcode.value.test()) {
         invalid = true;
         postcodeGroup.classList.add("has-error");
     }
@@ -780,13 +782,21 @@ module.exports = Handlebars.template({"1":function(depth0,helpers,partials,data)
     + escapeExpression(((helper = helpers.oldWord || (depth0 && depth0.oldWord)),(typeof helper === functionType ? helper.call(depth0, {"name":"oldWord","hash":{},"data":data}) : helper)))
     + ".\n			</div>\n			<form id=\"submit-score-form\" class=\"well\">\n				<label>Email</label>\n				<input class=\"form-control\" id=\"email\"/>\n				<br/>\n				<button id=\"submit-score\" class=\"btn btn-primary\">Submit</button>\n				<button type=\"button\" class=\"btn btn-success\">Go again!</button>\n			</form>\n		</div>\n	";
 },"3":function(depth0,helpers,partials,data) {
-  return "\n	<div class=\"col-md-6\">\n		<h3 >Local Leaderboards</h3>\n	</div>\n	";
-  },"5":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", escapeExpression=this.escapeExpression;
+  return "\n	<div class=\"col-md-6\">\n		<h3 >"
+    + escapeExpression(((helper = helpers.county || (depth0 && depth0.county)),(typeof helper === functionType ? helper.call(depth0, {"name":"county","hash":{},"data":data}) : helper)))
+    + " Leaderboard</h3>\n	</div>\n	";
+},"5":function(depth0,helpers,partials,data) {
+  var helper, functionType="function", escapeExpression=this.escapeExpression;
+  return "\n	<div class=\"col-md-6\">	\n		<p>See where you scale against others around "
+    + escapeExpression(((helper = helpers.county || (depth0 && depth0.county)),(typeof helper === functionType ? helper.call(depth0, {"name":"county","hash":{},"data":data}) : helper)))
+    + "!</p>\n	</div>\n	";
+},"7":function(depth0,helpers,partials,data) {
   var stack1, buffer = "\n	<div class=\"col-md-6\">\n	<table class=\"table table-bordered\">\n		<tr class=\"active\">\n			<td>#</td>\n			<td>Name</td>\n		</tr>\n		";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.localScores), {"name":"each","hash":{},"fn":this.program(6, data),"inverse":this.noop,"data":data});
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.localScores), {"name":"each","hash":{},"fn":this.program(8, data),"inverse":this.noop,"data":data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   return buffer + "\n	</table>\n</div>\n";
-},"6":function(depth0,helpers,partials,data) {
+},"8":function(depth0,helpers,partials,data) {
   var stack1, functionType="function", escapeExpression=this.escapeExpression;
   return "\n			<tr>\n    			<td>"
     + escapeExpression(((stack1 = (data == null || data === false ? data : data.index)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
@@ -802,11 +812,14 @@ module.exports = Handlebars.template({"1":function(depth0,helpers,partials,data)
   buffer += "\n	";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.localScores), {"name":"if","hash":{},"fn":this.program(3, data),"inverse":this.noop,"data":data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n	<div class=\"col-md-6\">\n		<h3>Global Leaderboards</h3>\n	</div>\n	<div class=\"col-md-6\">	\n		<p>See where you scale against others around the country!</p>\n	</div>\n	\n	<div class=\"col-md-6\">\n		<p>See where you scale against others around the globe!</p>\n	</div>\n	";
+  buffer += "\n	<div class=\"col-md-6\">\n		<h3>Global Leaderboards</h3>\n	</div>\n	";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.localScores), {"name":"if","hash":{},"fn":this.program(5, data),"inverse":this.noop,"data":data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n	\n	<div class=\"col-md-6\">\n		<p>See where you scale against others around the globe!</p>\n	</div>\n	";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.localScores), {"name":"if","hash":{},"fn":this.program(7, data),"inverse":this.noop,"data":data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n<div class=\"col-md-6\">\n	<table class=\"table table-bordered\">\n		<tr class=\"active\">\n			<td>#</td>\n			<td>Name</td>\n		</tr>\n		";
-  stack1 = helpers.each.call(depth0, (depth0 && depth0.globalScores), {"name":"each","hash":{},"fn":this.program(6, data),"inverse":this.noop,"data":data});
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.globalScores), {"name":"each","hash":{},"fn":this.program(8, data),"inverse":this.noop,"data":data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   return buffer + "\n	</table>\n</div>\n</div>";
 },"useData":true});
