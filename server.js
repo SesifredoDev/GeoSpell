@@ -100,7 +100,11 @@ router.get("/postcode/:postcode", function(req, res) {
     body = JSON.parse(body);
     console.log(body);
     console.log(req.params.postcode);
-    res.json(body.results[0].address_components[body.results[0].address_components.length-2].short_name);
+    if(!body.results.length) {
+      res.writeHead(404);
+    } else {
+      res.json(body.results[0].address_components[body.results[0].address_components.length-2].short_name);
+    }
   });
 });
 
