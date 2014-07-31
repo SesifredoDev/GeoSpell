@@ -23,16 +23,33 @@ var getWords = function(level, cb) {
     });
 }
 
+var modernBrowser = SpeechSynthesisUtterance !== undefined;
+
 var loadQuestion = function() {
     mainFrame.innerHTML = questionTemplate({
         word:currentWord, 
-        modernBrowser:false, 
+        modernBrowser:modernBrowser, 
         score:score,
         wrong:wrong,
         oldWord:oldWord,
         lives:lives,
         county:county
     });
+    if(modernBrowser) {
+        var player = document.getElementById("player");
+        var speak = function() {
+            var msg = new SpeechSynthesisUtterance();
+            var voices = window.speechSynthesis.getVoices();
+            msg.voice = voices[1]; // Note: some voices don't support altering params
+            msg.voiceURI = 'native';
+            msg.text = currentWord;
+            msg.lang = 'en-GB';
+            msg.volume = 1;
+            speechSynthesis.speak(msg);
+        };
+        player.addEventListener("click", speak);
+        speak();
+    }
     console.log(currentWord);
         var submit = document.getElementById("submit");
         var answer = document.getElementById("answer");
@@ -833,7 +850,7 @@ module.exports = Handlebars.template({"1":function(depth0,helpers,partials,data)
     + escapeExpression(((helper = helpers.oldWord || (depth0 && depth0.oldWord)),(typeof helper === functionType ? helper.call(depth0, {"name":"oldWord","hash":{},"data":data}) : helper)))
     + ".\n    </div>\n";
 },"3":function(depth0,helpers,partials,data) {
-  return "\n        <div class=\"text-center\">\n            <i class=\"fa fa-play-circle fa-4\"></i>\n        </div>\n    ";
+  return "\n        <div class=\"text-center\">\n            <i class=\"fa fa-play-circle fa-5x\" id=\"player\"></i>\n        </div>\n    ";
   },"5":function(depth0,helpers,partials,data) {
   var helper, functionType="function", escapeExpression=this.escapeExpression;
   return "\n        <audio controls=\"controls\" autoplay=\"autoplay\">\n            <source src=\"/speech/"
