@@ -96,7 +96,7 @@ router.post("/leaderboard/:board", function(req, res) {
 });
 
 router.get("/postcode/:postcode", function(req, res) {
-  request.get("https://maps.googleapis.com/maps/api/geocode/json?address=" + req.params.postcode + ".json", function(err, s, body) {
+  request.get("https://maps.googleapis.com/maps/api/geocode/json?address=" + req.params.postcode, function(err, s, body) {
     body = JSON.parse(body);
     console.log(body);
     console.log(req.params.postcode);
