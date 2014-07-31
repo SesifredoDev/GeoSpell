@@ -77,17 +77,29 @@ router.get("/speech/:word", function(req, res) {
 
 var client = redis.createClient(16181, "pub-redis-16181.us-east-1-2.1.ec2.garantiadata.com");
 
-router.get("/leaderboard/:board?", function(req, res) {
-  client.zrange("global" || req.params.board, 0, req.query.end || 10, function(err, keys) {
-    res.end(keys);
+router.get("/leaderboard/:board", function(req, res) {
+  client.zrange(req.params.board, 0, req.query.end || 10, "WITHSCORES", function(err, keys) {
+    var obj = {};
+    for(var i = 0; i < keys.length; i += 2) {
+      obj[keys[i]] = keys[i+1];
+    }
+    res.end(JSON.stringify(obj));
   });
 });
 
 router.post("/leaderboard/:board", function(req, res) {
-  client.zadd(req.params.board, req.body.score, req.body.name, function(err) {
+  client.zadd(req.params.board, req.body.score, req.body.email, function(err) {
     if(err) {
       res.end(err);
     }
+  });
+});
+
+router.get("/postcode/:postcode", function(req, res) {
+  request.get("http://uk-postcodes.com/postcode/" + req.params.postcode + ".json", function(err, s, body) {
+    body = JSON.parse(body);
+    console.log(body);
+    res.json(body.administrative.council.title);
   });
 });
 

@@ -79,12 +79,14 @@ var loadLevel = function(level) {
     });
 }
 
-var loadLeaderboard = function(score) {
-    container.innerHTML = leaderboardTemplate({
+var loadScores = function(globalScores, localScores) {
+     container.innerHTML = leaderboardTemplate({
         score:score,
-        oldWord:oldWord
+        oldWord:oldWord,
+        globalScores:globalScores,
+        localScores:localScores,
+        showScore:lives === 0
     });
-    console.log(score);
     if(score !== undefined) {
         console.log("fsdfd");
         var submitScoreForm = $("#submit-score-form");
@@ -92,16 +94,60 @@ var loadLeaderboard = function(score) {
         console.log(submitScoreForm);
         console.log(submitScore);
         submitScore.on("click", function() {
-            console.log("hey");
+            $.post("/leaderboard/global", {
+              email:document.getElementById("email").value,
+              score:score
+            });
+            if(county) {
+                $.post("/leaderboard/" +county, {
+                    email:document.getElementById("email").value,
+                    score:score
+                });
+            }
             submitScoreForm.slideUp(); 
         });
     }
+};
+
+var loadLeaderboard = function(score) {
+    $.get("/leaderboard/global", function(globalScores) {
+    globalScores = JSON.parse(globalScores);
+ if(county) {
+    $.get("/leaderboard/" + county, function(localScores) {
+        localScores = JSON.parse(localScores);
+        console.log(localScores);
+        loadScores(globalScores, localScores);
+    });
+ } else {
+     loadScores(globalScores);
+ }
+    });
 };
 
 var age = document.getElementById("age");
 var postcode = document.getElementById("postcode");
 var ageGroup = document.getElementById("age-group");
 var postcodeGroup = document.getElementById("postcode-group");
+$("#openLeaderboard").on("click", function(e) {
+    e.preventDefault();
+    loadLeaderboard();
+});
+
+/**
+ * LOAD OF PREVIOUS SETTINGS
+ * SAVED IN localStorage
+ */
+
+if(localStorage.age) {
+    age.value = localStorage.age;
+} 
+if(localStorage.postcode) {
+    postcode.value = localStorage.postcode;
+}
+if(localStorage.county) {
+    county = localStorage.county;
+}
+
 startButton.addEventListener("click", function(e) {
     var invalid = false;
     var ageValue = parseInt(age.value);
@@ -130,8 +176,23 @@ startButton.addEventListener("click", function(e) {
         level = 9;
     } 
     if(!invalid) {
+    }
+    if(localStorage) {
+        localStorage.age = ageValue;
+        localStorage.postcode = postcode.value;
+    }
+    if(!invalid) {
+        console.log(localStorage.postcode !== postcode.value &&localStorage.county !== undefined);
+        if(!(localStorage && localStorage.postcode !== postcode.value && localStorage.county !== undefined)) {
+            console.log("hi");
+            $.get("/postcode/" + postcode.value, function(data) {
+                county = data;
+                localStorage.county = county;
+            });
+        }
         loadLevel(level);
     }
+
 });
 
 },{"./public/leaderboard.hbs":10,"./public/question.hbs":11}],2:[function(require,module,exports){
@@ -711,13 +772,43 @@ module.exports = require("handlebars/runtime")["default"];
 },{"handlebars/runtime":8}],10:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var Handlebars = require('hbsfy/runtime');
-module.exports = Handlebars.template({"compiler":[5,">= 2.0.0"],"main":function(depth0,helpers,partials,data) {
+module.exports = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   var helper, functionType="function", escapeExpression=this.escapeExpression;
-  return "<div class=\"row\">\n	<div class=\"col-md-12\">\n		<div class=\"alert alert-success\" role=\"alert\">\n			<b>Well done!</b> You got: "
+  return "\n		<div class=\"col-md-12\">\n			<div class=\"alert alert-success\" role=\"alert\">\n				<b>Well done!</b> You got: "
     + escapeExpression(((helper = helpers.score || (depth0 && depth0.score)),(typeof helper === functionType ? helper.call(depth0, {"name":"score","hash":{},"data":data}) : helper)))
-    + ".\n			The answer to the final question was "
+    + ".\n				The answer to the final question was "
     + escapeExpression(((helper = helpers.oldWord || (depth0 && depth0.oldWord)),(typeof helper === functionType ? helper.call(depth0, {"name":"oldWord","hash":{},"data":data}) : helper)))
-    + ".\n		</div>\n			<form id=\"submit-score-form\" class=\"well\">\n				<label>Email</label>\n				<input class=\"form-control\" id=\"email\"/>\n				<br/>\n				<button id=\"submit-score\" class=\"btn btn-primary\">Submit</button>\n				<button type=\"button\" class=\"btn btn-success\">Go again!</button>\n			</form>\n	</div>\n	<div class=\"col-md-6\">\n		<h3 >Local Leaderboards</h3>\n	</div>\n	<div class=\"col-md-6\">\n		<h3>Global Leaderboards</h3>\n	</div>\n	<div class=\"col-md-6\">	\n		<p>See where you scale against others around the country!</p>\n	</div>\n	\n	<div class=\"col-md-6\">\n		<p>See where you scale against others around the globe!</p>\n	</div>\n	<div class=\"col-md-6\">\n	<table class=\"table table-bordered\">\n		<tr class=\"active\">\n			<td>#</td>\n			<td>Name</td>\n			<td>County</td>\n\n		</tr>\n			<tr>\n			<td>1</td>\n			<td>Jane Janley <span class=\"label label-default\">19</span></td>\n			<td>Plymouth</td>\n\n		</tr>\n		<tr>\n			<td>2</td>\n			<td>Jeffery Jefferson <span class=\"label label-default\">17</span></td>\n			<td>Norfolk</td>\n\n		</tr>\n		<tr>\n			<td>3</td>\n			<td>Bradley Bradders <span class=\"label label-default\">15</span></td>\n			<td>Kent</td>\n	\n		</tr>\n	</table>\n</div>\n<div class=\"col-md-6\">\n	<table class=\"table table-bordered\">\n		<tr class=\"active\">\n			<td>#</td>\n			<td>Name</td>\n			<td>Country</td>\n\n		</tr>\n			<tr>\n			<td>1</td>\n			<td>Ade Adeshugba <span class=\"label label-default\">20</span></td>\n			<td>South Africa</td>\n\n		</tr>\n		<tr>\n			<td>2</td>\n			<td>Xin Hiun <span class=\"label label-default\">19</span></td>\n			<td>Japan</td>\n	\n		</tr>\n		<tr>\n			<td>3</td>\n			<td>Jane Janley <span class=\"label label-default\">19</span></td>\n			<td>UK</td>\n	\n		</tr>\n	</table>\n</div>\n</div>";
+    + ".\n			</div>\n			<form id=\"submit-score-form\" class=\"well\">\n				<label>Email</label>\n				<input class=\"form-control\" id=\"email\"/>\n				<br/>\n				<button id=\"submit-score\" class=\"btn btn-primary\">Submit</button>\n				<button type=\"button\" class=\"btn btn-success\">Go again!</button>\n			</form>\n		</div>\n	";
+},"3":function(depth0,helpers,partials,data) {
+  return "\n	<div class=\"col-md-6\">\n		<h3 >Local Leaderboards</h3>\n	</div>\n	";
+  },"5":function(depth0,helpers,partials,data) {
+  var stack1, buffer = "\n	<div class=\"col-md-6\">\n	<table class=\"table table-bordered\">\n		<tr class=\"active\">\n			<td>#</td>\n			<td>Name</td>\n		</tr>\n		";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.localScores), {"name":"each","hash":{},"fn":this.program(6, data),"inverse":this.noop,"data":data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  return buffer + "\n	</table>\n</div>\n";
+},"6":function(depth0,helpers,partials,data) {
+  var stack1, functionType="function", escapeExpression=this.escapeExpression;
+  return "\n			<tr>\n    			<td>"
+    + escapeExpression(((stack1 = (data == null || data === false ? data : data.index)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td>\n    			<td>\n    				"
+    + escapeExpression(((stack1 = (data == null || data === false ? data : data.key)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\n    				<span class=\"label label-success\">"
+    + escapeExpression((typeof depth0 === functionType ? depth0.apply(depth0) : depth0))
+    + "</span>\n   				</td>\n    		</tr>\n		";
+},"compiler":[5,">= 2.0.0"],"main":function(depth0,helpers,partials,data) {
+  var stack1, buffer = "<div class=\"row\">\n	";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showScore), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n	";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.localScores), {"name":"if","hash":{},"fn":this.program(3, data),"inverse":this.noop,"data":data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n	<div class=\"col-md-6\">\n		<h3>Global Leaderboards</h3>\n	</div>\n	<div class=\"col-md-6\">	\n		<p>See where you scale against others around the country!</p>\n	</div>\n	\n	<div class=\"col-md-6\">\n		<p>See where you scale against others around the globe!</p>\n	</div>\n	";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.localScores), {"name":"if","hash":{},"fn":this.program(5, data),"inverse":this.noop,"data":data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n<div class=\"col-md-6\">\n	<table class=\"table table-bordered\">\n		<tr class=\"active\">\n			<td>#</td>\n			<td>Name</td>\n		</tr>\n		";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.globalScores), {"name":"each","hash":{},"fn":this.program(6, data),"inverse":this.noop,"data":data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  return buffer + "\n	</table>\n</div>\n</div>";
 },"useData":true});
 
 },{"hbsfy/runtime":9}],11:[function(require,module,exports){
