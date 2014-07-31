@@ -92,6 +92,34 @@ router.post("/leaderboard/:board", function(req, res) {
     if(err) {
       res.end(err);
     }
+    client.get("average:" + req.params.board, function(err, avg) {
+      if(!avg) avg = 0;
+      client.set("average:" + req.params.board, avg, function(err, avg) {
+        
+      });
+    });
+  });
+});
+
+router.get("/averages", function(req, res) {
+  console.log("fsdfsddsf");
+  client.keys("average:*", function(err, keys) {
+    async.map(keys, function(key, cb) {
+      client.get(key, function(err, value) {
+        cb(err, {
+          county: key.slice("average:".length),
+          average:value
+        });
+      });
+    }, function(err, values) {
+      console.log("sdfdfsdsf");
+      if(err) {
+        console.log(err);
+        res.writeHead(500);
+      } else {
+        res.json(values);
+      }
+    });
   });
 });
 

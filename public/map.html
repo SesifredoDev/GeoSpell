@@ -1,44 +1,129 @@
-<!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<style>
-
-/* CSS goes here. */
-
-</style>
-<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+<title>OpenSpace Tutorial 2</title>
+<script type="text/javascript" src="https://openspace.ordnancesurvey.co.uk/osmapapi/openspace.js?key=FE260633012D4B86E0430B6CA40A6CB4"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>	
 </head>
 <body>
-<div id="vis"></div>
-<script>
+<div id="map" style="width: 1000px; height: 600px; border: 1px solid
+black;"></div>
+<script type="text/javascript">
+var osMap;
 
-var xy = d3.geo.albersUsa().translate([-900,950]).scale(28000);
-var path = d3.geo.path().projection;
+  var primaryKey = "ADMIN_UNIT_ID";
+  var valueKey = "MY_VALUE";
 
-var vis = d3.select("#vis")
-  .append("svg:svg")
-  .attr("width", 900)
-  .attr("height", 900);
+function init() {
+ 
+    //var options = {strategies: [new OpenSpace.Strategy.BBOX()],area_code: ["CTY" ]};
+    
+    // Create the administrative boundaries as a new layer and add them to the map
+    
+    //boundaryLayer = new OpenSpace.Layer.Boundary("Boundaries", options);
+    
+    //osMap.addLayer(boundaryLayer);
+    
+    //boundaryLayer = new OpenSpace.Layer.Boundary("Boundaries", options);
+    //osMap.addLayer(boundaryLayer);
+    
+    // Set map centre in National Grid Eastings and Northings and select zoom level 2
 
-d3.json("d.json", function(json) {
-  vis.append("svg:g")
-    .attr("class", "tracts")
-  .selectAll("path")
-    .data(json.features)
-  .enter().append("svg:path")
-    .attr("d", path)
-    .attr("fill-opacity", 0.5)
-    .attr("fill", function(d) {
-        if (d.properties["STATEFP10"] == "20") {  
-            return "#B5D9B9";
-        } else {
-            return "#85C3C0";
-        }
-    })
-    .attr("stroke", "#222");
+}
+
+ 
+//var options = {strategies: [new OpenSpace.Strategy.BBOX()],area_code: ["CTY" ]};
+    
+// Create the administrative boundaries as a new layer and add them to the map
+
+    
+// Set map centre in National Grid Eastings and Northings and select zoom level 2
+
+var feature = {};
+
+$.get("/averages", function(data) {
+    for(var i = 0; i < data.length; i++) {
+        feature[data[i].county] = data[i].average;
+    }
+    console.log("here");
+    console.log(data);
+    osMap = new OpenSpace.Map('map');
+    var s = createBoundaryLayer(data);
+    osMap.addLayer(s);
+    osMap.setCenter(new OpenSpace.MapPoint(400000, 400000), 2);
+    console.log(s);
+}).fail(function(err) {
+    console.log(err);
 });
 
+function createBoundaryLayer(data) {
+    var context = function(feature) {
+        console.log("fsdfsd");
+        console.log(feature);
+        var key = feature.attributes.NAME;
+        var value = {
+            average: data[key.split(" ")[0]] || 0
+        };
+        console.log(key);
+        if(key === "Essex County") {
+             console.log(value);
+        }
+        return value;
+    };
+    
+     var style = new OpenLayers.Style();
+    
+    // Add rules that take return from feature fed into style dependent on the MY_VALUE property in the CSV file
+    
+    var ruleLow = new OpenLayers.Rule({
+        context: context,
+        filter: new OpenLayers.Filter.Comparison({
+            type: OpenLayers.Filter.Comparison.LESS_THAN,
+            property: "average",
+            value: 50
+        }),
+        symbolizer: {fillColor: "red", fillOpacity: 0.4, strokeColor: "black"}
+    });
+    
+    var ruleMedium = new OpenLayers.Rule({
+        context: context,
+        filter: new OpenLayers.Filter.Comparison({
+            type: OpenLayers.Filter.Comparison.EQUAL_TO,
+            property: "average",
+            value: 100
+        }),
+        symbolizer: {fillColor: "yellow", fillOpacity: 0.4, strokeColor: "black"}    
+  });
+    
+    var ruleHigh = new OpenLayers.Rule({
+        context: context,
+        filter: new OpenLayers.Filter.Comparison({
+            type: OpenLayers.Filter.Comparison.GREATER_THAN_OR_EQUAL_TO,
+            property: "average",
+            value: 150
+        }),
+        symbolizer: {fillColor: "green", fillOpacity: 0.4, strokeColor: "black"}
+    });
+    
+    // Add the style rules
+    
+    style.addRules([ruleLow, ruleMedium, ruleHigh]);
+    var styleMap = new OpenLayers.StyleMap(style);
+    
+    styleMap.addUniqueValueRules("default", "average", context);
+   
+    // Finally create the boundary layer with the style map   
+    
+    boundaryLayer = new OpenSpace.Layer.Boundary("Boundaries", {
+        strategies: [new OpenSpace.Strategy.BBOX()],
+        area_code: ["CTY"],
+        styleMap: styleMap 
+    });
+    
+    return boundaryLayer;
+}
+
+init();
 </script>
+
 </body>
 </html>
