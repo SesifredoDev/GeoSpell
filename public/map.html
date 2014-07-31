@@ -7,25 +7,38 @@
 /* CSS goes here. */
 
 </style>
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
 </head>
 <body>
-<script type="text/javascript" src="http://openspace.ordnancesurvey.co.uk/osmapapi/openspace.js?key=FE260633012D4B86E0430B6CA40A6CB4"></script>
-<div id="map" style="width: 500px; height: 300px; border: 1px solid
-black;"></div>
+<div id="vis"></div>
 <script>
 
-var osMap;
-function init()
-{
- osMap = new OpenSpace.Map('map');
- osMap.setCenter(new OpenSpace.MapPoint(438760, 114760), 10);
- var markers = new OpenLayers.Layer.Markers("Markers");
- osMap.addLayer(markers);
- var pos = new OpenSpace.MapPoint(438760, 114760);
- var marker = new OpenLayers.Marker(pos);
- markers.addMarker(marker);
-}
-init();
+var xy = d3.geo.albersUsa().translate([-900,950]).scale(28000);
+var path = d3.geo.path().projection;
+
+var vis = d3.select("#vis")
+  .append("svg:svg")
+  .attr("width", 900)
+  .attr("height", 900);
+
+d3.json("d.json", function(json) {
+  vis.append("svg:g")
+    .attr("class", "tracts")
+  .selectAll("path")
+    .data(json.features)
+  .enter().append("svg:path")
+    .attr("d", path)
+    .attr("fill-opacity", 0.5)
+    .attr("fill", function(d) {
+        if (d.properties["STATEFP10"] == "20") {  
+            return "#B5D9B9";
+        } else {
+            return "#85C3C0";
+        }
+    })
+    .attr("stroke", "#222");
+});
+
 </script>
 </body>
 </html>
