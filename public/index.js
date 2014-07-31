@@ -97,6 +97,8 @@ var loadLevel = function(level) {
     });
 }
 
+var badwords = require("badwords/regexp");
+
 var loadScores = function(globalScores, localScores) {
      container.innerHTML = leaderboardTemplate({
         score:score,
@@ -112,18 +114,28 @@ var loadScores = function(globalScores, localScores) {
         var submitScore = $("#submit-score");
         console.log(submitScoreForm);
         console.log(submitScore);
-        submitScore.on("click", function() {
-            $.post("/leaderboard/global", {
-              email:document.getElementById("email").value,
-              score:score
-            });
-            if(county) {
-                $.post("/leaderboard/" +county, {
-                    email:document.getElementById("email").value,
-                    score:score
-                });
+        var email = document.getElementById("email");
+        submitScore.on("click", function(e) {
+            e.preventDefault();
+            if(badwords.test(email.value)) {
+                 submitScoreForm.slideUp(); 
+            } else {
+                if(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email.value)) {
+                    submitScoreForm.slideUp(); 
+                    $.post("/leaderboard/global", {
+                        email:email.value,
+                        score:score
+                    });
+                    if(county) {
+                        $.post("/leaderboard/" +county, {
+                            email:email.value,
+                            score:score
+                        });
+                    }
+                } else {
+                    document.getElementById("email-group").classList.add("has-error");
+                }
             }
-            submitScoreForm.slideUp(); 
         });
     }
 };
@@ -214,7 +226,9 @@ startButton.addEventListener("click", function(e) {
 
 });
 
-},{"./public/leaderboard.hbs":10,"./public/question.hbs":11}],2:[function(require,module,exports){
+},{"./public/leaderboard.hbs":11,"./public/question.hbs":12,"badwords/regexp":2}],2:[function(require,module,exports){
+module.exports = /\b(4r5e|5h1t|5hit|a55|anal|anus|ar5e|arrse|arse|ass|ass-fucker|asses|assfucker|assfukka|asshole|assholes|asswhole|a_s_s|b!tch|b00bs|b17ch|b1tch|ballbag|balls|ballsack|bastard|beastial|beastiality|bellend|bestial|bestiality|bi\+ch|biatch|bitch|bitcher|bitchers|bitches|bitchin|bitching|bloody|blow job|blowjob|blowjobs|boiolas|bollock|bollok|boner|boob|boobs|booobs|boooobs|booooobs|booooooobs|breasts|buceta|bugger|bum|bunny fucker|butt|butthole|buttmuch|buttplug|c0ck|c0cksucker|carpet muncher|cawk|chink|cipa|cl1t|clit|clitoris|clits|cnut|cock|cock-sucker|cockface|cockhead|cockmunch|cockmuncher|cocks|cocksuck|cocksucked|cocksucker|cocksucking|cocksucks|cocksuka|cocksukka|cok|cokmuncher|coksucka|coon|cox|crap|cum|cummer|cumming|cums|cumshot|cunilingus|cunillingus|cunnilingus|cunt|cuntlick|cuntlicker|cuntlicking|cunts|cyalis|cyberfuc|cyberfuck|cyberfucked|cyberfucker|cyberfuckers|cyberfucking|d1ck|damn|dick|dickhead|dildo|dildos|dink|dinks|dirsa|dlck|dog-fucker|doggin|dogging|donkeyribber|doosh|duche|dyke|ejaculate|ejaculated|ejaculates|ejaculating|ejaculatings|ejaculation|ejakulate|f u c k|f u c k e r|f4nny|fag|fagging|faggitt|faggot|faggs|fagot|fagots|fags|fanny|fannyflaps|fannyfucker|fanyy|fatass|fcuk|fcuker|fcuking|feck|fecker|felching|fellate|fellatio|fingerfuck|fingerfucked|fingerfucker|fingerfuckers|fingerfucking|fingerfucks|fistfuck|fistfucked|fistfucker|fistfuckers|fistfucking|fistfuckings|fistfucks|flange|fook|fooker|fuck|fucka|fucked|fucker|fuckers|fuckhead|fuckheads|fuckin|fucking|fuckings|fuckingshitmotherfucker|fuckme|fucks|fuckwhit|fuckwit|fudge packer|fudgepacker|fuk|fuker|fukker|fukkin|fuks|fukwhit|fukwit|fux|fux0r|f_u_c_k|gangbang|gangbanged|gangbangs|gaylord|gaysex|goatse|God|god-dam|god-damned|goddamn|goddamned|hardcoresex|hell|heshe|hoar|hoare|hoer|homo|hore|horniest|horny|hotsex|jack-off|jackoff|jap|jerk-off|jism|jiz|jizm|jizz|kawk|knob|knobead|knobed|knobend|knobhead|knobjocky|knobjokey|kock|kondum|kondums|kum|kummer|kumming|kums|kunilingus|l3i\+ch|l3itch|labia|lust|lusting|m0f0|m0fo|m45terbate|ma5terb8|ma5terbate|masochist|master-bate|masterb8|masterbat*|masterbat3|masterbate|masterbation|masterbations|masturbate|mo-fo|mof0|mofo|mothafuck|mothafucka|mothafuckas|mothafuckaz|mothafucked|mothafucker|mothafuckers|mothafuckin|mothafucking|mothafuckings|mothafucks|mother fucker|motherfuck|motherfucked|motherfucker|motherfuckers|motherfuckin|motherfucking|motherfuckings|motherfuckka|motherfucks|muff|mutha|muthafecker|muthafuckker|muther|mutherfucker|n1gga|n1gger|nazi|nigg3r|nigg4h|nigga|niggah|niggas|niggaz|nigger|niggers|nob|nob jokey|nobhead|nobjocky|nobjokey|numbnuts|nutsack|orgasim|orgasims|orgasm|orgasms|p0rn|pawn|pecker|penis|penisfucker|phonesex|phuck|phuk|phuked|phuking|phukked|phukking|phuks|phuq|pigfucker|pimpis|piss|pissed|pisser|pissers|pisses|pissflaps|pissin|pissing|pissoff|poop|porn|porno|pornography|pornos|prick|pricks|pron|pube|pusse|pussi|pussies|pussy|pussys|rectum|retard|rimjaw|rimming|s hit|s.o.b.|sadist|schlong|screwing|scroat|scrote|scrotum|semen|sex|sh!\+|sh!t|sh1t|shag|shagger|shaggin|shagging|shemale|shi\+|shit|shitdick|shite|shited|shitey|shitfuck|shitfull|shithead|shiting|shitings|shits|shitted|shitter|shitters|shitting|shittings|shitty|skank|slut|sluts|smegma|smut|snatch|son-of-a-bitch|spac|spunk|s_h_i_t|t1tt1e5|t1tties|teets|teez|testical|testicle|tit|titfuck|tits|titt|tittie5|tittiefucker|titties|tittyfuck|tittywank|titwank|tosser|turd|tw4t|twat|twathead|twatty|twunt|twunter|v14gra|v1gra|vagina|viagra|vulva|w00se|wang|wank|wanker|wanky|whoar|whore|willies|willy|xrated|xxx)\b/gi;
+},{}],3:[function(require,module,exports){
 "use strict";
 /*globals Handlebars: true */
 var base = require("./handlebars/base");
@@ -247,7 +261,7 @@ var Handlebars = create();
 Handlebars.create = create;
 
 exports["default"] = Handlebars;
-},{"./handlebars/base":3,"./handlebars/exception":4,"./handlebars/runtime":5,"./handlebars/safe-string":6,"./handlebars/utils":7}],3:[function(require,module,exports){
+},{"./handlebars/base":4,"./handlebars/exception":5,"./handlebars/runtime":6,"./handlebars/safe-string":7,"./handlebars/utils":8}],4:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -480,7 +494,7 @@ exports.log = log;var createFrame = function(object) {
   return frame;
 };
 exports.createFrame = createFrame;
-},{"./exception":4,"./utils":7}],4:[function(require,module,exports){
+},{"./exception":5,"./utils":8}],5:[function(require,module,exports){
 "use strict";
 
 var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
@@ -509,7 +523,7 @@ function Exception(message, node) {
 Exception.prototype = new Error();
 
 exports["default"] = Exception;
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 var Utils = require("./utils");
 var Exception = require("./exception")["default"];
@@ -683,7 +697,7 @@ exports.noop = noop;function initData(context, data) {
   }
   return data;
 }
-},{"./base":3,"./exception":4,"./utils":7}],6:[function(require,module,exports){
+},{"./base":4,"./exception":5,"./utils":8}],7:[function(require,module,exports){
 "use strict";
 // Build out our basic SafeString type
 function SafeString(string) {
@@ -695,7 +709,7 @@ SafeString.prototype.toString = function() {
 };
 
 exports["default"] = SafeString;
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
 /*jshint -W004 */
 var SafeString = require("./safe-string")["default"];
@@ -780,24 +794,24 @@ exports.isEmpty = isEmpty;function appendContextPath(contextPath, id) {
 }
 
 exports.appendContextPath = appendContextPath;
-},{"./safe-string":6}],8:[function(require,module,exports){
+},{"./safe-string":7}],9:[function(require,module,exports){
 // Create a simple path alias to allow browserify to resolve
 // the runtime on a supported path.
 module.exports = require('./dist/cjs/handlebars.runtime');
 
-},{"./dist/cjs/handlebars.runtime":2}],9:[function(require,module,exports){
+},{"./dist/cjs/handlebars.runtime":3}],10:[function(require,module,exports){
 module.exports = require("handlebars/runtime")["default"];
 
-},{"handlebars/runtime":8}],10:[function(require,module,exports){
+},{"handlebars/runtime":9}],11:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var Handlebars = require('hbsfy/runtime');
 module.exports = Handlebars.template({"1":function(depth0,helpers,partials,data) {
   var helper, functionType="function", escapeExpression=this.escapeExpression;
-  return "\n		<div class=\"col-md-12\">\n			<div class=\"alert alert-success\" role=\"alert\">\n				<b>Well done!</b> You got: "
+  return "\n		<div class=\"col-md-12\">\n			<div class=\"alert alert-success\" role=\"alert\">\n				<b>Well done!</b> You got "
     + escapeExpression(((helper = helpers.score || (depth0 && depth0.score)),(typeof helper === functionType ? helper.call(depth0, {"name":"score","hash":{},"data":data}) : helper)))
     + ".\n				The answer to the final question was "
     + escapeExpression(((helper = helpers.oldWord || (depth0 && depth0.oldWord)),(typeof helper === functionType ? helper.call(depth0, {"name":"oldWord","hash":{},"data":data}) : helper)))
-    + ".\n			</div>\n			<form id=\"submit-score-form\" class=\"well\">\n				<label>Email</label>\n				<input class=\"form-control\" id=\"email\"/>\n				<br/>\n				<button id=\"submit-score\" class=\"btn btn-primary\">Submit</button>\n				<button type=\"button\" class=\"btn btn-success\">Go again!</button>\n			</form>\n		</div>\n	";
+    + ".\n			</div>\n			<form id=\"submit-score-form\" class=\"well\">\n			  	<div class=\"form-group\" id=\"email-group\">\n					<label class=\"control-label\">Email</label>\n					<input class=\"form-control\" id=\"email\"/>\n				</div>\n				<br/>\n				<button id=\"submit-score\" class=\"btn btn-primary\">Submit</button>\n				<button type=\"button\" class=\"btn btn-success\">Go again!</button>\n			</form>\n		</div>\n	";
 },"3":function(depth0,helpers,partials,data) {
   var helper, functionType="function", escapeExpression=this.escapeExpression;
   return "\n	<div class=\"col-md-6\">\n		<h3 >"
@@ -841,7 +855,7 @@ module.exports = Handlebars.template({"1":function(depth0,helpers,partials,data)
   return buffer + "\n	</table>\n</div>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":9}],11:[function(require,module,exports){
+},{"hbsfy/runtime":10}],12:[function(require,module,exports){
 // hbsfy compiled Handlebars template
 var Handlebars = require('hbsfy/runtime');
 module.exports = Handlebars.template({"1":function(depth0,helpers,partials,data) {
@@ -877,4 +891,4 @@ module.exports = Handlebars.template({"1":function(depth0,helpers,partials,data)
   return buffer + "\n    <br/>\n    <br/>\n    <input style=\"\" class=\"form-control\" type=\"text\" id=\"answer\"/>\n</div>\n<br/>\n<button class=\"btn btn-primary\" id=\"submit\">\n    Submit\n    <i class=\"fa fa-chevron-right\"></i>\n</button>\n</div>\n</div>";
 },"useData":true});
 
-},{"hbsfy/runtime":9}]},{},[1]);
+},{"hbsfy/runtime":10}]},{},[1]);

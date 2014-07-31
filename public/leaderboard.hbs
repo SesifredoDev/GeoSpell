@@ -2,12 +2,14 @@
 	{{#if showScore}}
 		<div class="col-md-12">
 			<div class="alert alert-success" role="alert">
-				<b>Well done!</b> You got: {{score}}.
+				<b>Well done!</b> You got {{score}}.
 				The answer to the final question was {{oldWord}}.
 			</div>
 			<form id="submit-score-form" class="well">
-				<label>Email</label>
-				<input class="form-control" id="email"/>
+			  	<div class="form-group" id="email-group">
+					<label class="control-label">Email</label>
+					<input class="form-control" id="email"/>
+				</div>
 				<br/>
 				<button id="submit-score" class="btn btn-primary">Submit</button>
 				<button type="button" class="btn btn-success">Go again!</button>

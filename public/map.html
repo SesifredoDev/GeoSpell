@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+
+/* CSS goes here. */
+
+</style>
+</head>
+<body>
+<script type="text/javascript" src="http://openspace.ordnancesurvey.co.uk/osmapapi/openspace.js?key=FE260633012D4B86E0430B6CA40A6CB4"></script>
+<div id="map" style="width: 500px; height: 300px; border: 1px solid
+black;"></div>
+<script>
+
+var osMap;
+function init()
+{
+ osMap = new OpenSpace.Map('map');
+ osMap.setCenter(new OpenSpace.MapPoint(438760, 114760), 10);
+ var markers = new OpenLayers.Layer.Markers("Markers");
+ osMap.addLayer(markers);
+ var pos = new OpenSpace.MapPoint(438760, 114760);
+ var marker = new OpenLayers.Marker(pos);
+ markers.addMarker(marker);
+}
+init();
+</script>
+</body>
+</html>
