@@ -96,10 +96,10 @@ router.post("/leaderboard/:board", function(req, res) {
 });
 
 router.get("/postcode/:postcode", function(req, res) {
-  request.get("http://uk-postcodes.com/postcode/" + req.params.postcode + ".json", function(err, s, body) {
+  request.get("https://maps.googleapis.com/maps/api/geocode/json?address=" + req.params.postcode + ".json", function(err, s, body) {
     body = JSON.parse(body);
-    console.log(body);
-    res.json(body.administrative.council.title);
+    console.log(body)
+    res.json(body.results[0].address_components[body.results[0].address_components.length-2].short_name);
   });
 });
 
