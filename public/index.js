@@ -50,11 +50,9 @@ var loadQuestion = function() {
         player.addEventListener("click", speak);
         speak();
     }
-    console.log(currentWord);
         var submit = document.getElementById("submit");
         var answer = document.getElementById("answer");
         answer.focus(); // Autofocus
-        console.log(submit);
         var s = function() {
             if(answer.value.toLowerCase() === currentWord.toLowerCase()) {
                 score += 5;
@@ -78,7 +76,7 @@ var loadQuestion = function() {
                     loadQuestion();
                 }
             } else {
-              loadLeaderboard(score);
+              loadLeaderboard();
             }
         };
         submit.addEventListener("click", s);
@@ -100,6 +98,8 @@ var loadLevel = function(level) {
 var badwords = require("badwords/regexp");
 
 var loadScores = function(globalScores, localScores) {
+    console.log(globalScores);
+    console.log(localScores);
      container.innerHTML = leaderboardTemplate({
         score:score,
         oldWord:oldWord,
@@ -109,14 +109,12 @@ var loadScores = function(globalScores, localScores) {
         county:county
     });
     if(score !== undefined) {
-        console.log("fsdfd");
         var submitScoreForm = $("#submit-score-form");
         var submitScore = $("#submit-score");
-        console.log(submitScoreForm);
-        console.log(submitScore);
         var email = document.getElementById("email");
         submitScore.on("click", function(e) {
             e.preventDefault();
+            lives = 3;
             if(badwords.test(email.value)) {
                  submitScoreForm.slideUp(); 
             } else {
@@ -138,15 +136,35 @@ var loadScores = function(globalScores, localScores) {
             }
         });
     }
+    var name = document.getElementById("name");
+    var search = document.getElementById("search");
+    search.addEventListener("click", function(e) {
+        loadLeaderboard(name.value);
+        e.preventDefault();
+    });
+    var start = document.getElementById("start");
+    if(start) {
+    start.addEventListener("click", function() {
+        score = 0;
+       loadLevel(0); 
+    });
+    }
 };
 
-var loadLeaderboard = function(score) {
-    $.get("/leaderboard/global", function(globalScores) {
-    globalScores = JSON.parse(globalScores);
+var loadLeaderboard = function(name) {
+    console.log(name);
+    $.get("/leaderboard/global/" + (name || ""), function(globalScores) {
+
  if(county) {
-    $.get("/leaderboard/" + county, function(localScores) {
-        localScores = JSON.parse(localScores);
-        console.log(localScores);
+     console.log(county);
+    $.get("/leaderboard/" + county + "/" + (name||""), function(localScores) {
+        console.log(globalScores);
+        if(localScores[name]) {
+         localScores[name].glow = true;   
+        }
+        if(globalScores[name]) {
+            globalScores[name].glow = true;
+        }
         loadScores(globalScores, localScores);
     });
  } else {
@@ -816,7 +834,7 @@ module.exports = Handlebars.template({"1":function(depth0,helpers,partials,data)
     + escapeExpression(((helper = helpers.score || (depth0 && depth0.score)),(typeof helper === functionType ? helper.call(depth0, {"name":"score","hash":{},"data":data}) : helper)))
     + ".\n				The answer to the final question was "
     + escapeExpression(((helper = helpers.oldWord || (depth0 && depth0.oldWord)),(typeof helper === functionType ? helper.call(depth0, {"name":"oldWord","hash":{},"data":data}) : helper)))
-    + ".\n			</div>\n			<form id=\"submit-score-form\" class=\"well\">\n			  	<div class=\"form-group\" id=\"email-group\">\n					<label class=\"control-label\">Email</label>\n					<input class=\"form-control\" id=\"email\"/>\n				</div>\n				<br/>\n				<button id=\"submit-score\" class=\"btn btn-primary\">Submit</button>\n				<button type=\"button\" class=\"btn btn-success\">Go again!</button>\n			</form>\n		</div>\n	";
+    + ".\n			</div>\n			<form id=\"submit-score-form\" class=\"well\">\n			  	<div class=\"form-group\" id=\"email-group\">\n					<label class=\"control-label\">Email</label>\n					<input class=\"form-control\" id=\"email\"/>\n				</div>\n				<br/>\n				<button id=\"submit-score\" class=\"btn btn-primary\">Submit</button>\n				<button type=\"button\" id=\"start\" class=\"btn btn-success\">Go again!</button>\n			</form>\n		</div>\n	";
 },"3":function(depth0,helpers,partials,data) {
   var helper, functionType="function", escapeExpression=this.escapeExpression;
   return "\n	<div class=\"col-md-6\">\n		<h3 >"
@@ -833,19 +851,23 @@ module.exports = Handlebars.template({"1":function(depth0,helpers,partials,data)
   if(stack1 || stack1 === 0) { buffer += stack1; }
   return buffer + "\n	</table>\n</div>\n";
 },"8":function(depth0,helpers,partials,data) {
-  var stack1, functionType="function", escapeExpression=this.escapeExpression;
-  return "\n			<tr>\n    			<td>"
-    + escapeExpression(((stack1 = (data == null || data === false ? data : data.index)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+  var stack1, functionType="function", escapeExpression=this.escapeExpression, buffer = "\n			<tr ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.glow), {"name":"if","hash":{},"fn":this.program(9, data),"inverse":this.noop,"data":data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  return buffer + ">\n    			<td>"
+    + escapeExpression(((stack1 = (depth0 && depth0.rank)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</td>\n    			<td>\n    				"
     + escapeExpression(((stack1 = (data == null || data === false ? data : data.key)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\n    				<span class=\"label label-success\">"
-    + escapeExpression((typeof depth0 === functionType ? depth0.apply(depth0) : depth0))
+    + escapeExpression(((stack1 = (depth0 && depth0.value)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</span>\n   				</td>\n    		</tr>\n		";
-},"compiler":[5,">= 2.0.0"],"main":function(depth0,helpers,partials,data) {
+},"9":function(depth0,helpers,partials,data) {
+  return "class=\"info\"";
+  },"compiler":[5,">= 2.0.0"],"main":function(depth0,helpers,partials,data) {
   var stack1, buffer = "<div class=\"row\">\n	";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.showScore), {"name":"if","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n	";
+  buffer += "\n	<div class=\"col-md-12\">\n		<form class=\"well\">\n			<label>Search</label>\n			<input class=\"form-control\" id=\"name\"/>\n			<br/>\n			<button id=\"search\" class=\"btn btn-primary\">Search</button>\n		</form>\n	</div>\n	";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.localScores), {"name":"if","hash":{},"fn":this.program(3, data),"inverse":this.noop,"data":data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n	<div class=\"col-md-6\">\n		<h3>Global Leaderboards</h3>\n	</div>\n	";
