@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>OpenSpace Tutorial 2</title>
+<title>Map</title>
 <script type="text/javascript" src="https://openspace.ordnancesurvey.co.uk/osmapapi/openspace.js?key=FE260633012D4B86E0430B6CA40A6CB4"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>	
 </head>
@@ -13,22 +13,6 @@ var osMap;
   var primaryKey = "ADMIN_UNIT_ID";
   var valueKey = "MY_VALUE";
 
-function init() {
- 
-    //var options = {strategies: [new OpenSpace.Strategy.BBOX()],area_code: ["CTY" ]};
-    
-    // Create the administrative boundaries as a new layer and add them to the map
-    
-    //boundaryLayer = new OpenSpace.Layer.Boundary("Boundaries", options);
-    
-    //osMap.addLayer(boundaryLayer);
-    
-    //boundaryLayer = new OpenSpace.Layer.Boundary("Boundaries", options);
-    //osMap.addLayer(boundaryLayer);
-    
-    // Set map centre in National Grid Eastings and Northings and select zoom level 2
-
-}
 
  
 //var options = {strategies: [new OpenSpace.Strategy.BBOX()],area_code: ["CTY" ]};
@@ -121,8 +105,6 @@ function createBoundaryLayer(data) {
     
     return boundaryLayer;
 }
-
-init();
 </script>
 
 </body>
