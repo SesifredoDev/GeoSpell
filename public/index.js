@@ -178,6 +178,10 @@ if(localStorage.postcode) {
 if(localStorage.county) {
     county = localStorage.county;
 }
+var country = document.getElementById("country");
+if(localStorage.country) {
+  country.value = localStorage.country;
+}
 
 startButton.addEventListener("click", function(e) {
     var invalid = false;
@@ -211,12 +215,13 @@ startButton.addEventListener("click", function(e) {
     if(localStorage) {
         localStorage.age = ageValue;
         localStorage.postcode = postcode.value;
+        localStorage.country = country.value;
     }
     if(!invalid) {
         console.log(localStorage.postcode !== postcode.value &&localStorage.county !== undefined);
         if(!(localStorage && localStorage.postcode !== postcode.value && localStorage.county !== undefined)) {
             console.log("hi");
-            $.get("/postcode/" + postcode.value, function(data) {
+            $.get("/postcode/" + postcode.value + "," + country.value, function(data) {
                 county = data;
                 localStorage.county = county;
             });

@@ -12,7 +12,12 @@ var express = require('express');
 var session = require("express-session");
 var bodyParser = require("body-parser");
 var levels = require("./levels");
-
+var handlebars = require("handlebars");
+var fs = require("fs");
+var countries = require("country-data").countries;
+var homePage = handlebars.compile(fs.readFileSync("./public/index.hbs").toString())({
+  countries: countries.all
+});
 var vorbis = require("vorbis");
 var ogg = require("ogg");
 var lame = require("lame"); // for MP3
@@ -28,6 +33,10 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded());
 
 var API_KEY = "009057c6287f8c80a49053c3c8c2da500b6abb3f9a925a737";
+
+router.get("/", function(req, res) {
+  res.end(homePage);
+});
 
 router.get("/words/:level", function(req, res) {
   console.log(req.params.level);
@@ -131,7 +140,7 @@ router.get("/postcode/:postcode", function(req, res) {
     if(!body.results.length) {
       res.writeHead(404);
     } else {
-      res.json(body.results[0].address_components[body.results[0].address_components.length-2].short_name);
+      res.json(body.results[0].address_components[body.results[0].address_components.length-2].long_name);
     }
   });
 });
