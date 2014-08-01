@@ -104,8 +104,8 @@ router.post("/leaderboard/:board", function(req, res) {
       res.end(err);
     }
     client.get("average:" + req.params.board, function(err, avg) {
-      if(!avg) avg = 0;
-      client.set("average:" + req.params.board, avg, function(err, avg) {
+      if(!avg) avg = req.body.score;
+      client.set("average:" + req.params.board, (avg + req.body.score) /2, function(err, avg) {
         
       });
     });
