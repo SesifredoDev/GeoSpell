@@ -12,18 +12,10 @@
 				</div>
 				<br/>
 				<button id="submit-score" class="btn btn-primary">Submit</button>
-				<button type="button" id="start" class="btn btn-success">Go again!</button>
+				<button type="button" class="btn btn-success">Go again!</button>
 			</form>
 		</div>
 	{{/if}}
-	<div class="col-md-12">
-		<form class="well">
-			<label>Search</label>
-			<input class="form-control" id="name"/>
-			<br/>
-			<button id="search" class="btn btn-primary">Search</button>
-		</form>
-	</div>
 	{{#if localScores}}
 	<div class="col-md-6">
 		<h3 >{{county}} Leaderboard</h3>
@@ -49,11 +41,11 @@
 			<td>Name</td>
 		</tr>
 		{{#each localScores}}
-			<tr {{#if this.glow}}class="info"{{/if}}>
-    			<td>{{this.rank}}</td>
+			<tr>
+    			<td>{{@index}}</td>
     			<td>
     				{{@key}}
-    				<span class="label label-success">{{this.value}}</span>
+    				<span class="label label-success">{{this}}</span>
    				</td>
     		</tr>
 		{{/each}}
@@ -67,11 +59,11 @@
 			<td>Name</td>
 		</tr>
 		{{#each globalScores}}
-			<tr {{#if this.glow}}class="info"{{/if}}>
-    			<td>{{this.rank}}</td>
+			<tr>
+    			<td>{{@index}}</td>
     			<td>
     				{{@key}}
-    				<span class="label label-success">{{this.value}}</span>
+    				<span class="label label-success">{{this}}</span>
    				</td>
     		</tr>
 		{{/each}}

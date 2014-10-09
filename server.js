@@ -90,11 +90,9 @@ router.get("/leaderboard/:board", function(req, res) {
   client.zrevrange(req.params.board, 0, req.query.end || 10, "WITHSCORES", function(err, keys) {
     var obj = {};
     for(var i = 0; i < keys.length; i += 2) {
-  obj[keys[i]] = {
-            value: keys[i+1],
-            rank:i/2 + 1
-          }    }
-    res.json(obj);
+      obj[keys[i]] = keys[i+1];
+    }
+    res.end(JSON.stringify(obj));
   });
 });
 
@@ -131,25 +129,6 @@ router.get("/averages", function(req, res) {
         res.json(values);
       }
     });
-  });
-});
-
-router.get("/leaderboard/:board/:name", function(req, res) {
-  client.zrank(req.params.board, req.params.name, function(err, rank) {
-    if(rank === undefined) {
-      res.json({});
-    } else {
-      client.zrevrange(req.params.board, rank, rank+10, "WITHSCORES", function(err, keys) {
-        var obj = {};
-        for(var i = 0; i < keys.length; i += 2) {
-          obj[keys[i]] = {
-            value: keys[i+1],
-            rank:(rank+i/2) + 1
-          }
-        }
-        res.json(obj);
-      });
-    }
   });
 });
 
